@@ -836,3 +836,586 @@ body::before {
   background: var(--surface3);
   border-radius: 3px
 }
+
+/* ===== RESPONSIVE MOBILE ===== */
+
+/* TABLET (768px - 1024px) */
+@media (max-width: 1024px) {
+  .main {
+    padding: 32px 24px;
+  }
+
+  .page-title {
+    font-size: 28px;
+  }
+
+  .kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .bottom-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .bottom-row {
+    grid-template-columns: 1fr;
+  }
+
+  .region-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .filters {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .chart-legend {
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .line-wrap {
+    height: 250px;
+  }
+
+  .data-table {
+    font-size: 11px;
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: 10px 12px;
+  }
+}
+
+/* MOBILE (max 768px) */
+@media (max-width: 768px) {
+  .shell {
+    flex-direction: column;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: 100%;
+    height: auto;
+    padding: 16px 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    max-height: none;
+  }
+
+  .logo {
+    padding: 0 16px 12px;
+    margin-bottom: 12px;
+    border-bottom: none;
+  }
+
+  .logo-mark {
+    font-size: 16px;
+  }
+
+  .logo-sub {
+    font-size: 8px;
+  }
+
+  .nav-section {
+    padding: 0;
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .nav-label {
+    display: none;
+  }
+
+  .nav-item {
+    padding: 6px 10px;
+    font-size: 12px;
+    gap: 6px;
+    margin-bottom: 0;
+    flex-shrink: 0;
+  }
+
+  .nav-item.active {
+    border-left: none;
+    padding-left: 10px;
+    border-bottom: 2px solid var(--v1);
+  }
+
+  .nav-icon {
+    width: 14px;
+    height: 14px;
+  }
+
+  .sidebar-footer {
+    display: none;
+  }
+
+  /* MAIN */
+  .main {
+    padding: 16px;
+    flex: 1;
+  }
+
+  .page-title {
+    font-size: 22px;
+    letter-spacing: 0;
+  }
+
+  .page-sub {
+    font-size: 11px;
+  }
+
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .filters {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .filter-btn {
+    width: 100%;
+    padding: 10px 14px;
+    text-align: center;
+  }
+
+  /* KPI GRID */
+  .kpi-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .kpi-card {
+    padding: 18px 16px;
+  }
+
+  .kpi-label {
+    font-size: 9px;
+    margin-bottom: 8px;
+  }
+
+  .kpi-val {
+    font-size: 24px;
+    letter-spacing: 0;
+    margin-bottom: 8px;
+  }
+
+  .kpi-sub {
+    font-size: 10px;
+  }
+
+  .badge {
+    padding: 2px 6px;
+    font-size: 9px;
+  }
+
+  /* CHARTS */
+  .wide-chart {
+    padding: 20px 16px;
+    margin-bottom: 16px;
+  }
+
+  .chart-header {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .chart-title {
+    font-size: 14px;
+  }
+
+  .chart-desc {
+    font-size: 11px;
+    max-width: 100%;
+  }
+
+  .chart-legend {
+    gap: 8px;
+    flex-direction: column;
+    flex-shrink: 1;
+  }
+
+  .leg-item {
+    font-size: 11px;
+  }
+
+  .line-wrap {
+    height: 200px;
+  }
+
+  /* BOTTOM GRIDS */
+  .bottom-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .bottom-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .chart-card {
+    padding: 16px;
+    animation: none;
+  }
+
+  .card-title {
+    font-size: 13px;
+  }
+
+  .card-desc {
+    font-size: 10px;
+    margin-bottom: 14px;
+  }
+
+  /* HBARS */
+  .hbar-row {
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .hbar-label {
+    width: 40px;
+    font-size: 11px;
+  }
+
+  .hbar-fill {
+    font-size: 10px;
+    padding: 0 8px;
+  }
+
+  /* REGIONS */
+  .region-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .region-card {
+    padding: 16px;
+  }
+
+  .region-name {
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+
+  .region-kpis {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .region-metric {
+    padding: 10px 12px;
+  }
+
+  .region-metric-label {
+    font-size: 9px;
+    margin-bottom: 4px;
+  }
+
+  .region-metric-value {
+    font-size: 16px;
+  }
+
+  /* TABLE */
+  .data-table {
+    font-size: 10px;
+    display: block;
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .data-table thead {
+    display: none;
+  }
+
+  .data-table tbody,
+  .data-table tr {
+    display: block;
+    width: 100%;
+  }
+
+  .data-table tr {
+    border-bottom: 1px solid var(--border);
+    padding: 12px 0;
+    margin-bottom: 8px;
+  }
+
+  .data-table td {
+    border-bottom: none;
+    padding: 6px 0;
+    display: block;
+    text-align: left;
+  }
+
+  .data-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    font-size: 9px;
+    color: var(--muted2);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  .data-table td.num {
+    text-align: left;
+  }
+
+  /* TRENDS CONTAINER */
+  .trends-container {
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+
+  .trend-title {
+    font-size: 14px;
+  }
+
+  .trend-desc {
+    font-size: 11px;
+  }
+
+  .chart-wrap {
+    height: 200px;
+  }
+
+  /* DONUT */
+  .donut-wrap {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .donut-legend {
+    flex: 1;
+    width: 100%;
+  }
+
+  .donut-item {
+    padding: 8px 0;
+    font-size: 11px;
+  }
+
+  .donut-sq {
+    width: 8px;
+    height: 8px;
+  }
+
+  /* MARGINS & TAGS */
+  .margin-row {
+    padding: 10px 0;
+    font-size: 12px;
+  }
+
+  .margin-label {
+    font-size: 11px;
+  }
+
+  .tag {
+    padding: 2px 8px;
+    font-size: 9px;
+  }
+
+  /* ANIMATIONS */
+  .kpi-card:nth-child(n) {
+    animation-delay: 0s !important;
+  }
+
+  .chart-card:nth-child(n) {
+    animation-delay: 0s !important;
+  }
+
+  .wide-chart {
+    animation-delay: 0s !important;
+  }
+}
+
+/* SMALL MOBILE (max 480px) */
+@media (max-width: 480px) {
+  .main {
+    padding: 12px;
+  }
+
+  .sidebar {
+    padding: 12px 0;
+  }
+
+  .logo {
+    padding: 0 12px 10px;
+  }
+
+  .nav-section {
+    gap: 4px;
+  }
+
+  .nav-item {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+
+  .page-title {
+    font-size: 18px;
+  }
+
+  .page-sub {
+    font-size: 10px;
+  }
+
+  .kpi-grid {
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .kpi-card {
+    padding: 14px 12px;
+  }
+
+  .kpi-val {
+    font-size: 20px;
+  }
+
+  .chart-card {
+    padding: 12px;
+  }
+
+  .chart-title {
+    font-size: 12px;
+  }
+
+  .card-desc {
+    font-size: 9px;
+    margin-bottom: 10px;
+  }
+
+  .line-wrap {
+    height: 150px;
+  }
+
+  .chart-wrap {
+    height: 150px;
+  }
+
+  .region-metric-value {
+    font-size: 14px;
+  }
+
+  .topbar {
+    margin-bottom: 16px;
+  }
+
+  .filter-btn {
+    padding: 8px 12px;
+    font-size: 10px;
+  }
+
+  .hbar-label {
+    width: 35px;
+    font-size: 10px;
+  }
+
+  .data-table {
+    font-size: 9px;
+  }
+
+  .data-table td::before {
+    font-size: 8px;
+  }
+
+  .margin-row {
+    padding: 8px 0;
+    font-size: 11px;
+  }
+
+  .region-name {
+    font-size: 14px;
+  }
+
+  .region-metric {
+    padding: 8px 10px;
+  }
+
+  .trend-title {
+    font-size: 12px;
+  }
+
+  .trend-desc {
+    font-size: 10px;
+  }
+
+  .donut-item {
+    font-size: 10px;
+  }
+
+  .leg-item {
+    font-size: 10px;
+  }
+
+  .filter-btn {
+    padding: 8px 12px;
+    font-size: 10px;
+  }
+}
+
+/* EXTRA SMALL (max 360px) */
+@media (max-width: 360px) {
+  .main {
+    padding: 8px;
+  }
+
+  .page-title {
+    font-size: 16px;
+  }
+
+  .kpi-card {
+    padding: 12px 10px;
+  }
+
+  .kpi-val {
+    font-size: 18px;
+  }
+
+  .chart-card {
+    padding: 10px;
+  }
+
+  .nav-item {
+    padding: 3px 6px;
+    font-size: 10px;
+  }
+
+  .filter-btn {
+    padding: 6px 10px;
+    font-size: 9px;
+  }
+
+  .line-wrap,
+  .chart-wrap {
+    height: 120px;
+  }
+
+  .hbar-label {
+    width: 30px;
+    font-size: 9px;
+  }
+}

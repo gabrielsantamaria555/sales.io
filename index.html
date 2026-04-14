@@ -681,16 +681,16 @@
     function buildTransactionsTable() {
       const html = rawData.map((r, i) => `
         <tr>
-          <td>${r.fecha}</td>
-          <td class="region-cell">${r.region}</td>
-          <td>${r.producto}</td>
-          <td>${r.canal}</td>
-          <td class="num">${fmt(r.unidades)}</td>
-          <td class="num">$${r.precio.toFixed(2)}</td>
-          <td class="num" style="color: var(--v1);">${fmtK(r.ingreso)}</td>
-          <td class="num" style="color: var(--v2);">${fmtK(r.costo)}</td>
-          <td class="num" style="color: var(--v5);">${fmtK(r.ganancia)}</td>
-          <td class="num"><span class="tag tag-cyan">${(r.ganancia / r.ingreso * 100).toFixed(1)}%</span></td>
+          <td data-label="Fecha">${r.fecha}</td>
+          <td data-label="Región" class="region-cell">${r.region}</td>
+          <td data-label="Producto">${r.producto}</td>
+          <td data-label="Canal">${r.canal}</td>
+          <td data-label="Unidades" class="num">${fmt(r.unidades)}</td>
+          <td data-label="Precio Unit." class="num">$${r.precio.toFixed(2)}</td>
+          <td data-label="Ingreso" class="num" style="color: var(--v1);">${fmtK(r.ingreso)}</td>
+          <td data-label="Costo" class="num" style="color: var(--v2);">${fmtK(r.costo)}</td>
+          <td data-label="Ganancia" class="num" style="color: var(--v5);">${fmtK(r.ganancia)}</td>
+          <td data-label="Margen" class="num"><span class="tag tag-cyan">${(r.ganancia / r.ingreso * 100).toFixed(1)}%</span></td>
         </tr>
       `).join('');
       document.getElementById('transactionsBody').innerHTML = html;
