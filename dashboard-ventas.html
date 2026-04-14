@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sales Performance Dashboard</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700&family=Inter:wght@300;400;500&display=swap"
+    rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #111827;
+      --surface: #1c2333;
+      --surface2: #242f45;
+      --surface3: #2d3a52;
+      --border: rgba(255, 255, 255, 0.08);
+      --border2: rgba(255, 255, 255, 0.15);
+      --text: #f1f5fe;
+      --muted: #7b8db0;
+      --muted2: #4e5f7a;
+      --v1: #00e5ff;
+      --v2: #ff4d6d;
+      --v3: #ffe600;
+      --v4: #7c3aed;
+      --v5: #00c896;
+      --v6: #ff8c00;
+      --font-display: 'Syne', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --font-mono: 'DM Mono', monospace;
+      --radius: 14px;
+      --radius-sm: 8px;
+      --radius-xs: 5px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 14px;
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-image: linear-gradient(rgba(0, 229, 255, 0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 229, 255, 0.025) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+
+    .shell {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 240px;
+      flex-shrink: 0;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 36px 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .logo {
+      padding: 0 28px 32px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 28px;
+    }
+
+    .logo-mark {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 22px;
+      letter-spacing: -0.5px;
+    }
+
+    .logo-mark .dot {
+      color: var(--v1);
+    }
+
+    .logo-sub {
+      font-size: 10px;
+      color: var(--muted);
+      font-family: var(--font-mono);
+      margin-top: 4px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .nav-section {
+      padding: 0 18px;
+      margin-bottom: 28px;
+    }
+
+    .nav-label {
+      font-size: 9px;
+      font-family: var(--font-mono);
+      color: var(--muted2);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      padding: 0 10px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 9px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.15s;
+      margin-bottom: 3px;
+      user-select: none;
+    }
+
+    .nav-item:hover {
+      background: var(--surface2);
+      color: var(--text);
+    }
+
+    .nav-item.active {
+      background: rgba(0, 229, 255, 0.08);
+      color: var(--v1);
+      border-left: 2px solid var(--v1);
+      padding-left: 12px;
+    }
+
+    .nav-icon {
+      width: 15px;
+      height: 15px;
+      flex-shrink: 0;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 20px 28px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .period-label {
+      font-size: 9px;
+      font-family: var(--font-mono);
+      color: var(--muted2);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+
+    .period-val {
+      font-size: 13px;
+      color: var(--text);
+      font-weight: 500;
+      font-family: var(--font-display);
+    }
+
+    /* MAIN */
+    .main {
+      flex: 1;
+      padding: 48px 56px;
+      overflow-x: hidden;
+      min-width: 0;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 48px;
+      gap: 24px;
+    }
+
+    .page-title {
+      font-family: var(--font-display);
+      font-size: 38px;
+      font-weight: 700;
+      letter-spacing: -1.5px;
+      line-height: 1;
+    }
+
+    .page-title .hi {
+      color: var(--v1);
+    }
+
+    .page-sub {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 8px;
+      font-weight: 300;
+    }
+
+    .filters {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 8px 18px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      border: 1px solid var(--border2);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.15s;
+      text-transform: uppercase;
+    }
+
+    .filter-btn:hover {
+      border-color: var(--v1);
+      color: var(--v1);
+    }
+
+    .filter-btn.active {
+      background: var(--v1);
+      color: #0a1628;
+      border-color: var(--v1);
+    }
+
+    /* KPI */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+
+    .kpi-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 30px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s, border-color 0.2s;
+      animation: fadeUp 0.5s ease both;
+    }
+
+    .kpi-card:nth-child(1) {
+      animation-delay: 0.05s
+    }
+
+    .kpi-card:nth-child(2) {
+      animation-delay: 0.1s
+    }
+
+    .kpi-card:nth-child(3) {
+      animation-delay: 0.15s
+    }
+
+    .kpi-card:nth-child(4) {
+      animation-delay: 0.2s
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--border2);
+    }
+
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: -40px;
+      right: -40px;
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      background: var(--kpi-color, var(--v1));
+      opacity: 0.08;
+      filter: blur(28px);
+    }
+
+    .kpi-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--kpi-color, var(--v1));
+    }
+
+    .kpi-card.c2 {
+      --kpi-color: var(--v2)
+    }
+
+    .kpi-card.c3 {
+      --kpi-color: var(--v3)
+    }
+
+    .kpi-card.c4 {
+      --kpi-color: var(--v5)
+    }
+
+    .kpi-label {
+      font-size: 10px;
+      font-family: var(--font-mono);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+
+    .kpi-val {
+      font-family: var(--font-display);
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: -2px;
+      line-height: 1;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+
+    .kpi-sub {
+      font-size: 11px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .badge {
+      padding: 3px 9px;
+      border-radius: var(--radius-xs);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 500;
+    }
+
+    .badge-cyan {
+      background: rgba(0, 229, 255, 0.12);
+      color: var(--v1);
+    }
+
+    .badge-rose {
+      background: rgba(255, 77, 109, 0.12);
+      color: var(--v2);
+    }
+
+    .badge-yellow {
+      background: rgba(255, 230, 0, 0.12);
+      color: var(--v3);
+    }
+
+    .badge-emerald {
+      background: rgba(0, 200, 150, 0.12);
+      color: var(--v5);
+    }
+
+    /* WIDE CHART */
+    .wide-chart {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 36px 40px;
+      margin-bottom: 28px;
+      animation: fadeUp 0.5s ease 0.25s both;
+    }
+
+    .chart-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      gap: 20px;
+    }
+
+    .chart-title {
+      font-family: var(--font-display);
+      font-size: 17px;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+      line-height: 1.35;
+    }
+
+    .chart-title .accent {
+      color: var(--v1);
+    }
+
+    .chart-desc {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 6px;
+      font-weight: 300;
+      line-height: 1.6;
+      max-width: 640px;
+    }
+
+    .chart-legend {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .leg-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      color: var(--muted);
+      white-space: nowrap;
+      font-family: var(--font-mono);
+    }
+
+    .leg-line {
+      width: 20px;
+      height: 2px;
+      border-radius: 1px;
+    }
+
+    .line-wrap {
+      position: relative;
+      height: 290px;
+    }
+
+    /* GRIDS */
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .bottom-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .chart-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 30px 32px;
+      animation: fadeUp 0.5s ease both;
+    }
+
+    .chart-card:nth-child(1) {
+      animation-delay: 0.3s
+    }
+
+    .chart-card:nth-child(2) {
+      animation-delay: 0.35s
+    }
+
+    .chart-card:nth-child(3) {
+      animation-delay: 0.4s
+    }
+
+    .chart-card:nth-child(4) {
+      animation-delay: 0.45s
+    }
+
+    .chart-card:nth-child(5) {
+      animation-delay: 0.5s
+    }
+
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: -0.2px;
+      line-height: 1.4;
+      margin-bottom: 5px;
+    }
+
+    .card-title .accent {
+      color: var(--v1);
+    }
+
+    .card-desc {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 300;
+      margin-bottom: 22px;
+      line-height: 1.6;
+    }
+
+    /* HBARS */
+    .hbar-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .hbar-label {
+      font-size: 12px;
+      color: var(--muted);
+      width: 52px;
+      flex-shrink: 0;
+      text-align: right;
+      font-family: var(--font-mono);
+    }
+
+    .hbar-track {
+      flex: 1;
+      height: 22px;
+      background: var(--surface2);
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .hbar-fill {
+      height: 100%;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      font-weight: 500;
+      transition: width 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    /* TABLES */
+    .margin-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 13px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+
+    .margin-row:last-child {
+      border-bottom: none;
+    }
+
+    .margin-name {
+      color: var(--text);
+    }
+
+    .margin-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .margin-amt {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .tag {
+      padding: 3px 10px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      font-weight: 500;
+    }
+
+    .tag-cyan {
+      background: rgba(0, 229, 255, 0.12);
+      color: var(--v1);
+    }
+
+    .tag-emerald {
+      background: rgba(0, 200, 150, 0.12);
+      color: var(--v5);
+    }
+
+    .tag-orange {
+      background: rgba(255, 140, 0, 0.12);
+      color: var(--v6);
+    }
+
+    /* DONUT */
+    .donut-wrap {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+    }
+
+    .donut-legend {
+      flex: 1;
+    }
+
+    .donut-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 12px;
+    }
+
+    .donut-item:last-child {
+      border-bottom: none;
+    }
+
+    .donut-name {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--muted);
+    }
+
+    .donut-sq {
+      width: 9px;
+      height: 9px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .donut-val {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(16px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    ::-webkit-scrollbar {
+      width: 5px
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg)
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--surface3);
+      border-radius: 3px
+    }
+  </style>
+</head>
+
+<body>
+  <div class="shell">
+    <nav class="sidebar">
+      <div class="logo">
+        <div class="logo-mark">sales<span class="dot">.</span>io</div>
+        <div class="logo-sub">performance dashboard</div>
+      </div>
+      <div class="nav-section">
+        <div class="nav-label">Análisis</div>
+        <div class="nav-item active">
+          <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="1" y="8" width="3" height="7" />
+            <rect x="6" y="5" width="3" height="10" />
+            <rect x="11" y="2" width="3" height="13" />
+          </svg>
+          Performance
+        </div>
+        <div class="nav-item">
+          <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+            <polyline points="1,12 5,7 9,9 15,3" />
+          </svg>
+          Tendencias
+        </div>
+        <div class="nav-item">
+          <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="8" cy="8" r="6" />
+            <path d="M8 2v6l4 2" />
+          </svg>
+          Regiones
+        </div>
+      </div>
+      <div class="nav-section">
+        <div class="nav-label">Gestión</div>
+        <div class="nav-item">
+          <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M3 2h10a1 1 0 011 1v10a1 1 0 01-1 1H3a1 1 0 01-1-1V3a1 1 0 011-1z" />
+            <path d="M5 6h6M5 9h4" />
+          </svg>
+          Reportes
+        </div>
+        <div class="nav-item">
+          <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="8" cy="5" r="3" />
+            <path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6" />
+          </svg>
+          Equipo
+        </div>
+      </div>
+      <div class="sidebar-footer">
+        <div class="period-label">Período activo</div>
+        <div class="period-val">Ene – Sep 2025</div>
+      </div>
+    </nav>
+
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <h1 class="page-title">Performance de <span class="hi">ventas</span></h1>
+          <p class="page-sub">22 transacciones &nbsp;·&nbsp; 4 regiones &nbsp;·&nbsp; 3 categorías de producto
+            &nbsp;·&nbsp; 2 canales</p>
+        </div>
+        <div class="filters">
+          <button class="filter-btn active" onclick="filterRegion('Todos',this)">Todos</button>
+          <button class="filter-btn" onclick="filterRegion('Norte',this)">Norte</button>
+          <button class="filter-btn" onclick="filterRegion('Sur',this)">Sur</button>
+          <button class="filter-btn" onclick="filterRegion('Este',this)">Este</button>
+          <button class="filter-btn" onclick="filterRegion('Oeste',this)">Oeste</button>
+        </div>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">Ingreso Total</div>
+          <div class="kpi-val" id="kpi-ingreso">$368K</div>
+          <div class="kpi-sub"><span class="badge badge-cyan" id="kpi-ingreso-badge">22 transacc.</span></div>
+        </div>
+        <div class="kpi-card c2">
+          <div class="kpi-label">Ganancia Bruta</div>
+          <div class="kpi-val" id="kpi-ganancia">$117K</div>
+          <div class="kpi-sub"><span class="badge badge-rose" id="kpi-margen-badge">margen 31.8%</span></div>
+        </div>
+        <div class="kpi-card c3">
+          <div class="kpi-label">Unidades Vendidas</div>
+          <div class="kpi-val" id="kpi-unidades">2,435</div>
+          <div class="kpi-sub"><span class="badge badge-yellow" id="kpi-unidades-badge">prom 110.7/tx</span></div>
+        </div>
+        <div class="kpi-card c4">
+          <div class="kpi-label">Ticket Promedio</div>
+          <div class="kpi-val" id="kpi-ticket">$16.7K</div>
+          <div class="kpi-sub"><span class="badge badge-emerald" id="kpi-ticket-badge">ingreso/tx</span></div>
+        </div>
+      </div>
+
+      <div class="wide-chart">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Julio fue el mes pico con $88K — <span class="accent">¿en qué meses vender más
+                también dejó más ganancia?</span></div>
+            <div class="chart-desc">Ingresos, ganancias y costos mensuales de enero a septiembre · La brecha entre
+              ingreso y costo es la ganancia real · Cuando las dos curvas superiores se acercan, el margen se comprime
+            </div>
+          </div>
+          <div class="chart-legend">
+            <div class="leg-item">
+              <div class="leg-line" style="background:var(--v1)"></div>Ingreso
+            </div>
+            <div class="leg-item">
+              <div class="leg-line" style="background:var(--v2)"></div>Ganancia
+            </div>
+            <div class="leg-item">
+              <div class="leg-line" style="background:var(--muted);opacity:0.5"></div>Costo
+            </div>
+          </div>
+        </div>
+        <div class="line-wrap">
+          <canvas id="chartLine" role="img"
+            aria-label="Gráfico de líneas de ingresos, ganancias y costos mensuales enero a septiembre 2025">Ingresos,
+            ganancias y costos de enero a septiembre 2025.</canvas>
+        </div>
+      </div>
+
+      <div class="bottom-grid">
+        <div class="chart-card">
+          <div class="card-title">Este lidera en ingresos absolutos — <span class="accent">¿qué tan lejos están las
+              otras regiones?</span></div>
+          <div class="card-desc">Ingresos totales del período por zona geográfica · Norte supera a Sur pese a tener
+            menos transacciones</div>
+          <div id="region-bars"></div>
+        </div>
+        <div class="chart-card">
+          <div class="card-title">Online y presencial casi empatados — <span class="accent">¿por cuál canal prefieren
+              comprar los clientes?</span></div>
+          <div class="card-desc">Distribución del ingreso total según canal de venta · Una diferencia de solo 6 puntos
+            porcentuales entre ambos</div>
+          <div class="donut-wrap">
+            <div style="position:relative;width:130px;height:130px;flex-shrink:0">
+              <canvas id="chartCanal" style="width:130px!important;height:130px!important" role="img"
+                aria-label="Dona canal de ventas: 53% en línea, 47% presencial">Canal En línea 53%, Presencial
+                47%.</canvas>
+            </div>
+            <div class="donut-legend" id="canal-list"></div>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="card-title">Electrónica retiene 38¢ de cada peso vendido — <span class="accent">¿qué producto es
+              más rentable por unidad de ingreso?</span></div>
+          <div class="card-desc">Margen bruto (ganancia ÷ ingreso) por categoría · Alta facturación no garantiza alta
+            rentabilidad</div>
+          <div id="margin-table"></div>
+        </div>
+      </div>
+
+      <div class="bottom-row">
+        <div class="chart-card">
+          <div class="card-title">Electrónica concentra el 72% del ingreso y el 70% del costo — <span
+              class="accent">¿qué tan ancha es la brecha entre lo que entra y lo que cuesta?</span></div>
+          <div class="card-desc">Ingresos totales vs. costos totales por categoría · La diferencia visible entre barras
+            es la ganancia bruta real de cada línea</div>
+          <div style="display:flex;gap:16px;margin-bottom:16px">
+            <div class="leg-item">
+              <div class="leg-line" style="background:var(--v1)"></div>Ingreso
+            </div>
+            <div class="leg-item">
+              <div class="leg-line" style="background:var(--v2)"></div>Costo
+            </div>
+          </div>
+          <div style="position:relative;height:210px;">
+            <canvas id="chartCostoIngreso" role="img"
+              aria-label="Barras agrupadas ingreso vs costo por categoría">Electrónica: $264K ingreso, $162K costo.
+              Hogar: $82K vs $55K. Ropa: $46K vs $33K.</canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="card-title">Oeste opera con el mejor margen pese a ser la región de menor ingreso — <span
+              class="accent">¿qué región convierte mejor cada peso vendido en ganancia?</span></div>
+          <div class="card-desc">Ganancia total y margen operativo por región · Norte tiene la mayor ganancia absoluta
+            pero Oeste la eficiencia más alta</div>
+          <div id="eficiencia-table"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const rawData = [
+      { fecha: '15/1/2025', region: 'Norte', producto: 'Electrónica', canal: 'En línea', unidades: 131, precio: 322.17, ingreso: 42204.27, costo: 29102.33, ganancia: 13101.94 },
+      { fecha: '22/1/2025', region: 'Sur', producto: 'Ropa', canal: 'Presencial', unidades: 89, precio: 64.47, ingreso: 5737.83, costo: 4369.01, ganancia: 1368.82 },
+      { fecha: '5/2/2025', region: 'Este', producto: 'Artículos del hogar', canal: 'En línea', unidades: 88, precio: 144.67, ingreso: 12730.96, costo: 9426.93, ganancia: 3304.03 },
+      { fecha: '18/2/2025', region: 'Oeste', producto: 'Electrónica', canal: 'Presencial', unidades: 113, precio: 296.67, ingreso: 33523.71, costo: 26161.53, ganancia: 7362.18 },
+      { fecha: '3/3/2025', region: 'Norte', producto: 'Ropa', canal: 'En línea', unidades: 172, precio: 46.69, ingreso: 8030.68, costo: 5769.02, ganancia: 2261.66 },
+      { fecha: '20/3/2025', region: 'Sur', producto: 'Artículos del hogar', canal: 'Presencial', unidades: 73, precio: 132.65, ingreso: 9683.45, costo: 6246.49, ganancia: 3436.96 },
+      { fecha: '2/4/2025', region: 'Este', producto: 'Electrónica', canal: 'En línea', unidades: 143, precio: 330.15, ingreso: 47211.45, costo: 32877.61, ganancia: 14333.84 },
+      { fecha: '15/4/2025', region: 'Oeste', producto: 'Ropa', canal: 'Presencial', unidades: 104, precio: 65.43, ingreso: 6804.72, costo: 4367.07, ganancia: 2437.65 },
+      { fecha: '1/5/2025', region: 'Norte', producto: 'Artículos del hogar', canal: 'En línea', unidades: 86, precio: 157.69, ingreso: 13561.34, costo: 9272.52, ganancia: 4288.82 },
+      { fecha: '18/5/2025', region: 'Sur', producto: 'Electrónica', canal: 'Presencial', unidades: 105, precio: 307.41, ingreso: 32278.05, costo: 20980.18, ganancia: 11297.87 },
+      { fecha: '4/6/2025', region: 'Este', producto: 'Ropa', canal: 'En línea', unidades: 135, precio: 58.39, ingreso: 7882.65, costo: 5510.52, ganancia: 2372.13 },
+      { fecha: '21/6/2025', region: 'Oeste', producto: 'Artículos del hogar', canal: 'Presencial', unidades: 69, precio: 141.28, ingreso: 9748.32, costo: 6825.94, ganancia: 2922.38 },
+      { fecha: '5/7/2025', region: 'Norte', producto: 'Electrónica', canal: 'En línea', unidades: 114, precio: 287.46, ingreso: 32770.44, costo: 21471.85, ganancia: 11298.59 },
+      { fecha: '14/7/2025', region: 'Sur', producto: 'Ropa', canal: 'Presencial', unidades: 97, precio: 63.28, ingreso: 6138.16, costo: 4522.81, ganancia: 1615.35 },
+      { fecha: '20/7/2025', region: 'Este', producto: 'Artículos del hogar', canal: 'En línea', unidades: 76, precio: 168.51, ingreso: 12806.76, costo: 7744.24, ganancia: 5062.52 },
+      { fecha: '28/7/2025', region: 'Oeste', producto: 'Electrónica', canal: 'Presencial', unidades: 138, precio: 312.65, ingreso: 43145.70, costo: 27372.92, ganancia: 15772.78 },
+      { fecha: '3/8/2025', region: 'Norte', producto: 'Ropa', canal: 'En línea', unidades: 108, precio: 51.74, ingreso: 5587.92, costo: 3363.15, ganancia: 2224.77 },
+      { fecha: '10/8/2025', region: 'Sur', producto: 'Artículos del hogar', canal: 'Presencial', unidades: 67, precio: 147.30, ingreso: 9869.10, costo: 6985.27, ganancia: 2883.83 },
+      { fecha: '17/8/2025', region: 'Este', producto: 'Electrónica', canal: 'En línea', unidades: 121, precio: 301.52, ingreso: 36483.92, costo: 23435.71, ganancia: 13048.21 },
+      { fecha: '23/8/2025', region: 'Oeste', producto: 'Ropa', canal: 'Presencial', unidades: 94, precio: 66.42, ingreso: 6243.48, costo: 4090.99, ganancia: 2152.49 },
+      { fecha: '29/8/2025', region: 'Norte', producto: 'Artículos del hogar', canal: 'En línea', unidades: 84, precio: 160.88, ingreso: 13513.92, costo: 8712.92, ganancia: 4801.00 },
+      { fecha: '4/9/2025', region: 'Sur', producto: 'Electrónica', canal: 'Presencial', unidades: 109, precio: 295.75, ingreso: 32236.75, costo: 20938.64, ganancia: 11298.11 },
+    ];
+    let filteredData = [...rawData];
+    const fmt = (n, d = 0) => new Intl.NumberFormat('es-AR', { minimumFractionDigits: d, maximumFractionDigits: d }).format(n);
+    const fmtK = n => n >= 1000 ? '$' + (n / 1000).toFixed(1) + 'K' : '$' + n.toFixed(0);
+    const fmtKA = n => '$' + (n / 1000).toFixed(0) + 'K';
+    function parseDate(s) { const [d, m, y] = s.split('/'); return new Date(+y, +m - 1, +d); }
+    Chart.defaults.color = '#7b8db0';
+    Chart.defaults.font.family = "'DM Mono',monospace";
+    Chart.defaults.font.size = 11;
+    const gridC = 'rgba(255,255,255,0.05)', borderC = 'rgba(255,255,255,0.08)';
+    const ttDef = { backgroundColor: '#1c2333', borderColor: 'rgba(0,229,255,0.2)', borderWidth: 1, titleColor: '#f1f5fe', bodyColor: '#7b8db0', padding: 14, cornerRadius: 8 };
+    let chartLine, chartCanal, chartCosto;
+
+    function buildLineChart(data) {
+      const ing = new Array(9).fill(0), gan = new Array(9).fill(0), cos = new Array(9).fill(0);
+      data.forEach(r => { const m = parseDate(r.fecha).getMonth(); if (m <= 8) { ing[m] += r.ingreso; gan[m] += r.ganancia; cos[m] += r.costo; } });
+      const ctx = document.getElementById('chartLine');
+      if (chartLine) chartLine.destroy();
+      chartLine = new Chart(ctx, {
+        type: 'line', data: {
+          labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep'],
+          datasets: [
+            { label: 'Ingreso', data: ing, borderColor: '#00e5ff', backgroundColor: 'rgba(0,229,255,0.07)', borderWidth: 2.5, pointRadius: 4, pointBackgroundColor: '#00e5ff', pointHoverRadius: 7, fill: true, tension: 0.4 },
+            { label: 'Ganancia', data: gan, borderColor: '#ff4d6d', backgroundColor: 'rgba(255,77,109,0.06)', borderWidth: 2.5, pointRadius: 4, pointBackgroundColor: '#ff4d6d', pointHoverRadius: 7, fill: true, tension: 0.4 },
+            { label: 'Costo', data: cos, borderColor: 'rgba(123,141,176,0.4)', borderDash: [5, 4], borderWidth: 1.5, pointRadius: 3, pointBackgroundColor: 'rgba(123,141,176,0.4)', fill: false, tension: 0.4 }
+          ]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
+          plugins: { legend: { display: false }, tooltip: { ...ttDef, callbacks: { label: c => ' ' + c.dataset.label + ': ' + fmtKA(c.raw) } } },
+          scales: { x: { grid: { color: gridC }, border: { color: borderC }, ticks: { color: '#7b8db0' } }, y: { grid: { color: gridC }, border: { color: borderC }, ticks: { color: '#7b8db0', callback: v => fmtKA(v) } } }
+        }
+      });
+    }
+
+    function buildCanalChart(data) {
+      const on = data.filter(r => r.canal === 'En línea').reduce((s, r) => s + r.ingreso, 0);
+      const pr = data.filter(r => r.canal === 'Presencial').reduce((s, r) => s + r.ingreso, 0);
+      const tot = on + pr;
+      const ctx = document.getElementById('chartCanal');
+      if (chartCanal) chartCanal.destroy();
+      chartCanal = new Chart(ctx, {
+        type: 'doughnut', data: { labels: ['En línea', 'Presencial'], datasets: [{ data: [on, pr], backgroundColor: ['#00e5ff', '#7c3aed'], borderWidth: 0, hoverOffset: 6 }] },
+        options: { responsive: false, cutout: '70%', plugins: { legend: { display: false }, tooltip: { ...ttDef, callbacks: { label: c => ' ' + c.label + ': ' + fmtK(c.raw) } } } }
+      });
+      document.getElementById('canal-list').innerHTML = [{ label: 'En línea', val: on, color: '#00e5ff' }, { label: 'Presencial', val: pr, color: '#7c3aed' }]
+        .map(i => `<div class="donut-item"><span class="donut-name"><span class="donut-sq" style="background:${i.color}"></span>${i.label}</span><span class="donut-val">${fmtK(i.val)} (${Math.round(i.val / tot * 100)}%)</span></div>`).join('');
+    }
+
+    function buildRegionBars(data) {
+      const regions = ['Norte', 'Sur', 'Este', 'Oeste'];
+      const clrs = { Norte: '#00e5ff', Sur: '#ff4d6d', Este: '#ffe600', Oeste: '#00c896' };
+      const txts = { Norte: '#0a1628', Sur: '#fff', Este: '#0a1628', Oeste: '#0a1628' };
+      const vals = {}; regions.forEach(r => vals[r] = data.filter(d => d.region === r).reduce((s, d) => s + d.ingreso, 0));
+      const max = Math.max(...Object.values(vals));
+      document.getElementById('region-bars').innerHTML = regions.map(r => `
+    <div class="hbar-row"><span class="hbar-label">${r}</span>
+    <div class="hbar-track"><div class="hbar-fill" style="width:${Math.round(vals[r] / max * 100)}%;background:${clrs[r]};color:${txts[r]}">${fmtK(vals[r])}</div></div></div>`).join('');
+    }
+
+    function buildMarginTable(data) {
+      const prods = ['Electrónica', 'Artículos del hogar', 'Ropa'];
+      const lbls = { 'Electrónica': 'Electrónica', 'Artículos del hogar': 'Art. del Hogar', 'Ropa': 'Ropa' };
+      const res = prods.map(p => {
+        const rows = data.filter(r => r.producto === p);
+        const ing = rows.reduce((s, r) => s + r.ingreso, 0);
+        const gan = rows.reduce((s, r) => s + r.ganancia, 0);
+        return { p, label: lbls[p], margin: ing > 0 ? gan / ing * 100 : 0 };
+      });
+      const tc = m => m >= 35 ? 'tag-cyan' : m >= 30 ? 'tag-emerald' : 'tag-orange';
+      const bc = m => m >= 35 ? '#00e5ff' : m >= 30 ? '#00c896' : '#ff8c00';
+      document.getElementById('margin-table').innerHTML = res.map(r => `
+    <div class="margin-row"><span class="margin-name">${r.label}</span>
+    <div class="margin-right">
+      <div style="width:70px;height:5px;background:var(--surface2);border-radius:3px;overflow:hidden"><div style="width:${Math.round(r.margin)}%;height:100%;background:${bc(r.margin)};border-radius:3px"></div></div>
+      <span class="tag ${tc(r.margin)}">${r.margin.toFixed(1)}%</span>
+    </div></div>`).join('');
+    }
+
+    function buildCostoChart(data) {
+      const prods = ['Electrónica', 'Artículos del hogar', 'Ropa'];
+      const lbls = ['Electrónica', 'Art. Hogar', 'Ropa'];
+      const ing = prods.map(p => data.filter(r => r.producto === p).reduce((s, r) => s + r.ingreso, 0));
+      const cos = prods.map(p => data.filter(r => r.producto === p).reduce((s, r) => s + r.costo, 0));
+      const ctx = document.getElementById('chartCostoIngreso');
+      if (chartCosto) chartCosto.destroy();
+      chartCosto = new Chart(ctx, {
+        type: 'bar', data: {
+          labels: lbls, datasets: [
+            { label: 'Ingreso', data: ing, backgroundColor: '#00e5ff', borderRadius: 5, barPercentage: 0.7 },
+            { label: 'Costo', data: cos, backgroundColor: '#ff4d6d', borderRadius: 5, barPercentage: 0.7 }
+          ]
+        }, options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false }, tooltip: { ...ttDef, callbacks: { label: c => ' ' + c.dataset.label + ': ' + fmtKA(c.raw) } } },
+          scales: { x: { grid: { display: false }, border: { color: borderC }, ticks: { color: '#7b8db0' } }, y: { grid: { color: gridC }, border: { color: borderC }, ticks: { color: '#7b8db0', callback: v => fmtKA(v) } } }
+        }
+      });
+    }
+
+    function buildEficiencia(data) {
+      const res = ['Norte', 'Sur', 'Este', 'Oeste'].map(r => {
+        const rows = data.filter(d => d.region === r);
+        const ing = rows.reduce((s, d) => s + d.ingreso, 0);
+        const gan = rows.reduce((s, d) => s + d.ganancia, 0);
+        return { r, gan, margin: ing > 0 ? gan / ing * 100 : 0 };
+      }).sort((a, b) => b.gan - a.gan);
+      const tc = m => m >= 33 ? 'tag-cyan' : m >= 31 ? 'tag-emerald' : 'tag-orange';
+      document.getElementById('eficiencia-table').innerHTML = res.map(row => `
+    <div class="margin-row"><span class="margin-name">${row.r}</span>
+    <div class="margin-right"><span class="margin-amt">${fmtK(row.gan)}</span><span class="tag ${tc(row.margin)}">${row.margin.toFixed(1)}%</span></div></div>`).join('');
+    }
+
+    function updateKPIs(data) {
+      const ing = data.reduce((s, r) => s + r.ingreso, 0);
+      const gan = data.reduce((s, r) => s + r.ganancia, 0);
+      const uni = data.reduce((s, r) => s + r.unidades, 0);
+      const n = data.length || 1;
+      document.getElementById('kpi-ingreso').textContent = fmtK(ing);
+      document.getElementById('kpi-ingreso-badge').textContent = n + ' transacc.';
+      document.getElementById('kpi-ganancia').textContent = fmtK(gan);
+      document.getElementById('kpi-margen-badge').textContent = 'margen ' + (ing > 0 ? gan / ing * 100 : 0).toFixed(1) + '%';
+      document.getElementById('kpi-unidades').textContent = fmt(uni);
+      document.getElementById('kpi-unidades-badge').textContent = 'prom ' + (uni / n).toFixed(1) + '/tx';
+      document.getElementById('kpi-ticket').textContent = fmtK(ing / n);
+    }
+
+    function filterRegion(region, btn) {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      filteredData = region === 'Todos' ? [...rawData] : rawData.filter(r => r.region === region);
+      renderAll();
+    }
+
+    function renderAll() {
+      updateKPIs(filteredData);
+      buildLineChart(filteredData);
+      buildCanalChart(filteredData);
+      buildRegionBars(filteredData);
+      buildMarginTable(filteredData);
+      buildCostoChart(filteredData);
+      buildEficiencia(filteredData);
+    }
+
+    window.addEventListener('DOMContentLoaded', renderAll);
+  </script>
+</body>
+
+</html>
