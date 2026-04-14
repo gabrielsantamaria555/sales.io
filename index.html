@@ -19,665 +19,8 @@
   <link
     href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700&family=Inter:wght@300;400;500&display=swap"
     rel="stylesheet">
+  <link rel="stylesheet" href="index.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-  <style>
-    *,
-    *::before,
-    *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    :root {
-      --bg: #111827;
-      --surface: #1c2333;
-      --surface2: #242f45;
-      --surface3: #2d3a52;
-      --border: rgba(255, 255, 255, 0.08);
-      --border2: rgba(255, 255, 255, 0.15);
-      --text: #f1f5fe;
-      --muted: #7b8db0;
-      --muted2: #4e5f7a;
-      --v1: #00e5ff;
-      --v2: #ff4d6d;
-      --v3: #ffe600;
-      --v4: #7c3aed;
-      --v5: #00c896;
-      --v6: #ff8c00;
-      --font-display: 'Syne', sans-serif;
-      --font-body: 'Inter', sans-serif;
-      --font-mono: 'DM Mono', monospace;
-      --radius: 14px;
-      --radius-sm: 8px;
-      --radius-xs: 5px;
-    }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: var(--font-body);
-      font-size: 14px;
-      line-height: 1.6;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
-      background-image: linear-gradient(rgba(0, 229, 255, 0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 229, 255, 0.025) 1px, transparent 1px);
-      background-size: 48px 48px;
-    }
-
-    .shell {
-      position: relative;
-      z-index: 1;
-      display: flex;
-      min-height: 100vh;
-    }
-
-    /* SIDEBAR */
-    .sidebar {
-      width: 240px;
-      flex-shrink: 0;
-      background: var(--surface);
-      border-right: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      padding: 36px 0;
-      position: sticky;
-      top: 0;
-      height: 100vh;
-      overflow-y: auto;
-    }
-
-    .logo {
-      padding: 0 28px 32px;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 28px;
-    }
-
-    .logo-mark {
-      font-family: var(--font-display);
-      font-weight: 700;
-      font-size: 22px;
-      letter-spacing: -0.5px;
-    }
-
-    .logo-mark .dot {
-      color: var(--v1);
-    }
-
-    .logo-sub {
-      font-size: 10px;
-      color: var(--muted);
-      font-family: var(--font-mono);
-      margin-top: 4px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-    }
-
-    .nav-section {
-      padding: 0 18px;
-      margin-bottom: 28px;
-    }
-
-    .nav-label {
-      font-size: 9px;
-      font-family: var(--font-mono);
-      color: var(--muted2);
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      margin-bottom: 10px;
-      padding: 0 10px;
-    }
-
-    .nav-item {
-      display: flex;
-      align-items: center;
-      gap: 11px;
-      padding: 9px 14px;
-      border-radius: var(--radius-sm);
-      font-size: 13px;
-      color: var(--muted);
-      cursor: pointer;
-      transition: all 0.15s;
-      margin-bottom: 3px;
-      user-select: none;
-    }
-
-    .nav-item:hover {
-      background: var(--surface2);
-      color: var(--text);
-    }
-
-    .nav-item.active {
-      background: rgba(0, 229, 255, 0.08);
-      color: var(--v1);
-      border-left: 2px solid var(--v1);
-      padding-left: 12px;
-    }
-
-    .nav-icon {
-      width: 15px;
-      height: 15px;
-      flex-shrink: 0;
-    }
-
-    .sidebar-footer {
-      margin-top: auto;
-      padding: 20px 28px 0;
-      border-top: 1px solid var(--border);
-    }
-
-    .period-label {
-      font-size: 9px;
-      font-family: var(--font-mono);
-      color: var(--muted2);
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      margin-bottom: 5px;
-    }
-
-    .period-val {
-      font-size: 13px;
-      color: var(--text);
-      font-weight: 500;
-      font-family: var(--font-display);
-    }
-
-    /* MAIN */
-    .main {
-      flex: 1;
-      padding: 48px 56px;
-      overflow-x: hidden;
-      min-width: 0;
-    }
-
-    .topbar {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      margin-bottom: 48px;
-      gap: 24px;
-    }
-
-    .page-title {
-      font-family: var(--font-display);
-      font-size: 38px;
-      font-weight: 700;
-      letter-spacing: -1.5px;
-      line-height: 1;
-    }
-
-    .page-title .hi {
-      color: var(--v1);
-    }
-
-    .page-sub {
-      font-size: 13px;
-      color: var(--muted);
-      margin-top: 8px;
-      font-weight: 300;
-    }
-
-    .filters {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    .filter-btn {
-      padding: 8px 18px;
-      border-radius: 100px;
-      font-size: 11px;
-      font-family: var(--font-mono);
-      font-weight: 500;
-      letter-spacing: 0.04em;
-      border: 1px solid var(--border2);
-      background: transparent;
-      color: var(--muted);
-      cursor: pointer;
-      transition: all 0.15s;
-      text-transform: uppercase;
-    }
-
-    .filter-btn:hover {
-      border-color: var(--v1);
-      color: var(--v1);
-    }
-
-    .filter-btn.active {
-      background: var(--v1);
-      color: #0a1628;
-      border-color: var(--v1);
-    }
-
-    /* KPI */
-    .kpi-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 18px;
-      margin-bottom: 28px;
-    }
-
-    .kpi-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 28px 30px;
-      position: relative;
-      overflow: hidden;
-      transition: transform 0.2s, border-color 0.2s;
-      animation: fadeUp 0.5s ease both;
-    }
-
-    .kpi-card:nth-child(1) {
-      animation-delay: 0.05s
-    }
-
-    .kpi-card:nth-child(2) {
-      animation-delay: 0.1s
-    }
-
-    .kpi-card:nth-child(3) {
-      animation-delay: 0.15s
-    }
-
-    .kpi-card:nth-child(4) {
-      animation-delay: 0.2s
-    }
-
-    .kpi-card:hover {
-      transform: translateY(-2px);
-      border-color: var(--border2);
-    }
-
-    .kpi-card::before {
-      content: '';
-      position: absolute;
-      top: -40px;
-      right: -40px;
-      width: 110px;
-      height: 110px;
-      border-radius: 50%;
-      background: var(--kpi-color, var(--v1));
-      opacity: 0.08;
-      filter: blur(28px);
-    }
-
-    .kpi-card::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: var(--kpi-color, var(--v1));
-    }
-
-    .kpi-card.c2 {
-      --kpi-color: var(--v2)
-    }
-
-    .kpi-card.c3 {
-      --kpi-color: var(--v3)
-    }
-
-    .kpi-card.c4 {
-      --kpi-color: var(--v5)
-    }
-
-    .kpi-label {
-      font-size: 10px;
-      font-family: var(--font-mono);
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 14px;
-    }
-
-    .kpi-val {
-      font-family: var(--font-display);
-      font-size: 36px;
-      font-weight: 700;
-      letter-spacing: -2px;
-      line-height: 1;
-      color: var(--text);
-      margin-bottom: 10px;
-    }
-
-    .kpi-sub {
-      font-size: 11px;
-      color: var(--muted);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .badge {
-      padding: 3px 9px;
-      border-radius: var(--radius-xs);
-      font-family: var(--font-mono);
-      font-size: 10px;
-      font-weight: 500;
-    }
-
-    .badge-cyan {
-      background: rgba(0, 229, 255, 0.12);
-      color: var(--v1);
-    }
-
-    .badge-rose {
-      background: rgba(255, 77, 109, 0.12);
-      color: var(--v2);
-    }
-
-    .badge-yellow {
-      background: rgba(255, 230, 0, 0.12);
-      color: var(--v3);
-    }
-
-    .badge-emerald {
-      background: rgba(0, 200, 150, 0.12);
-      color: var(--v5);
-    }
-
-    /* WIDE CHART */
-    .wide-chart {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 36px 40px;
-      margin-bottom: 28px;
-      animation: fadeUp 0.5s ease 0.25s both;
-    }
-
-    .chart-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      margin-bottom: 24px;
-      gap: 20px;
-    }
-
-    .chart-title {
-      font-family: var(--font-display);
-      font-size: 17px;
-      font-weight: 600;
-      letter-spacing: -0.3px;
-      line-height: 1.35;
-    }
-
-    .chart-title .accent {
-      color: var(--v1);
-    }
-
-    .chart-desc {
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 6px;
-      font-weight: 300;
-      line-height: 1.6;
-      max-width: 640px;
-    }
-
-    .chart-legend {
-      display: flex;
-      gap: 20px;
-      align-items: center;
-      flex-shrink: 0;
-    }
-
-    .leg-item {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      font-size: 12px;
-      color: var(--muted);
-      white-space: nowrap;
-      font-family: var(--font-mono);
-    }
-
-    .leg-line {
-      width: 20px;
-      height: 2px;
-      border-radius: 1px;
-    }
-
-    .line-wrap {
-      position: relative;
-      height: 290px;
-    }
-
-    /* GRIDS */
-    .bottom-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 20px;
-      margin-bottom: 20px;
-    }
-
-    .bottom-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-    }
-
-    .chart-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 30px 32px;
-      animation: fadeUp 0.5s ease both;
-    }
-
-    .chart-card:nth-child(1) {
-      animation-delay: 0.3s
-    }
-
-    .chart-card:nth-child(2) {
-      animation-delay: 0.35s
-    }
-
-    .chart-card:nth-child(3) {
-      animation-delay: 0.4s
-    }
-
-    .chart-card:nth-child(4) {
-      animation-delay: 0.45s
-    }
-
-    .chart-card:nth-child(5) {
-      animation-delay: 0.5s
-    }
-
-    .card-title {
-      font-family: var(--font-display);
-      font-size: 14px;
-      font-weight: 600;
-      letter-spacing: -0.2px;
-      line-height: 1.4;
-      margin-bottom: 5px;
-    }
-
-    .card-title .accent {
-      color: var(--v1);
-    }
-
-    .card-desc {
-      font-size: 11px;
-      color: var(--muted);
-      font-weight: 300;
-      margin-bottom: 22px;
-      line-height: 1.6;
-    }
-
-    /* HBARS */
-    .hbar-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-
-    .hbar-label {
-      font-size: 12px;
-      color: var(--muted);
-      width: 52px;
-      flex-shrink: 0;
-      text-align: right;
-      font-family: var(--font-mono);
-    }
-
-    .hbar-track {
-      flex: 1;
-      height: 22px;
-      background: var(--surface2);
-      border-radius: 5px;
-      overflow: hidden;
-    }
-
-    .hbar-fill {
-      height: 100%;
-      border-radius: 5px;
-      display: flex;
-      align-items: center;
-      padding: 0 10px;
-      font-size: 11px;
-      font-family: var(--font-mono);
-      font-weight: 500;
-      transition: width 0.7s cubic-bezier(0.23, 1, 0.32, 1);
-    }
-
-    /* TABLES */
-    .margin-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 13px 0;
-      border-bottom: 1px solid var(--border);
-      font-size: 13px;
-    }
-
-    .margin-row:last-child {
-      border-bottom: none;
-    }
-
-    .margin-name {
-      color: var(--text);
-    }
-
-    .margin-right {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .margin-amt {
-      font-family: var(--font-mono);
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .tag {
-      padding: 3px 10px;
-      border-radius: 100px;
-      font-size: 11px;
-      font-family: var(--font-mono);
-      font-weight: 500;
-    }
-
-    .tag-cyan {
-      background: rgba(0, 229, 255, 0.12);
-      color: var(--v1);
-    }
-
-    .tag-emerald {
-      background: rgba(0, 200, 150, 0.12);
-      color: var(--v5);
-    }
-
-    .tag-orange {
-      background: rgba(255, 140, 0, 0.12);
-      color: var(--v6);
-    }
-
-    /* DONUT */
-    .donut-wrap {
-      display: flex;
-      align-items: center;
-      gap: 22px;
-    }
-
-    .donut-legend {
-      flex: 1;
-    }
-
-    .donut-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 0;
-      border-bottom: 1px solid var(--border);
-      font-size: 12px;
-    }
-
-    .donut-item:last-child {
-      border-bottom: none;
-    }
-
-    .donut-name {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      color: var(--muted);
-    }
-
-    .donut-sq {
-      width: 9px;
-      height: 9px;
-      border-radius: 2px;
-      flex-shrink: 0;
-    }
-
-    .donut-val {
-      font-family: var(--font-mono);
-      font-size: 12px;
-      color: var(--text);
-      font-weight: 500;
-    }
-
-    @keyframes fadeUp {
-      from {
-        opacity: 0;
-        transform: translateY(16px)
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0)
-      }
-    }
-
-    ::-webkit-scrollbar {
-      width: 5px
-    }
-
-    ::-webkit-scrollbar-track {
-      background: var(--bg)
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: var(--surface3);
-      border-radius: 3px
-    }
-  </style>
 </head>
 
 <body>
@@ -689,7 +32,7 @@
       </div>
       <div class="nav-section">
         <div class="nav-label">Análisis</div>
-        <div class="nav-item active">
+        <div class="nav-item active" onclick="switchView('performance', this)">
           <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
             <rect x="1" y="8" width="3" height="7" />
             <rect x="6" y="5" width="3" height="10" />
@@ -697,13 +40,13 @@
           </svg>
           Performance
         </div>
-        <div class="nav-item">
+        <div class="nav-item" onclick="switchView('tendencias', this)">
           <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
             <polyline points="1,12 5,7 9,9 15,3" />
           </svg>
           Tendencias
         </div>
-        <div class="nav-item">
+        <div class="nav-item" onclick="switchView('regiones', this)">
           <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
             <circle cx="8" cy="8" r="6" />
             <path d="M8 2v6l4 2" />
@@ -713,14 +56,14 @@
       </div>
       <div class="nav-section">
         <div class="nav-label">Gestión</div>
-        <div class="nav-item">
+        <div class="nav-item" onclick="switchView('reportes', this)">
           <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
             <path d="M3 2h10a1 1 0 011 1v10a1 1 0 01-1 1H3a1 1 0 01-1-1V3a1 1 0 011-1z" />
             <path d="M5 6h6M5 9h4" />
           </svg>
           Reportes
         </div>
-        <div class="nav-item">
+        <div class="nav-item" onclick="switchView('equipo', this)">
           <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
             <circle cx="8" cy="5" r="3" />
             <path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6" />
@@ -735,129 +78,224 @@
     </nav>
 
     <main class="main">
-      <div class="topbar">
-        <div>
-          <h1 class="page-title">Performance de <span class="hi">ventas</span></h1>
-          <p class="page-sub">22 transacciones &nbsp;·&nbsp; 4 regiones &nbsp;·&nbsp; 3 categorías de producto
-            &nbsp;·&nbsp; 2 canales</p>
+      <div class="views">
+        <!-- VIEW: PERFORMANCE -->
+        <div id="view-performance" class="view active">
+          <div class="topbar">
+            <div>
+              <h1 class="page-title">Performance de <span class="hi">ventas</span></h1>
+              <p class="page-sub">22 transacciones &nbsp;·&nbsp; 4 regiones &nbsp;·&nbsp; 3 categorías de producto &nbsp;·&nbsp; 2 canales</p>
+            </div>
+            <div class="filters">
+              <button class="filter-btn active" onclick="filterRegion('Todos',this)">Todos</button>
+              <button class="filter-btn" onclick="filterRegion('Norte',this)">Norte</button>
+              <button class="filter-btn" onclick="filterRegion('Sur',this)">Sur</button>
+              <button class="filter-btn" onclick="filterRegion('Este',this)">Este</button>
+              <button class="filter-btn" onclick="filterRegion('Oeste',this)">Oeste</button>
+            </div>
+          </div>
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <div class="kpi-label">Ingreso Total</div>
+              <div class="kpi-val" id="kpi-ingreso">$368K</div>
+              <div class="kpi-sub"><span class="badge badge-cyan" id="kpi-ingreso-badge">22 transacc.</span></div>
+            </div>
+            <div class="kpi-card c2">
+              <div class="kpi-label">Ganancia Bruta</div>
+              <div class="kpi-val" id="kpi-ganancia">$117K</div>
+              <div class="kpi-sub"><span class="badge badge-rose" id="kpi-margen-badge">margen 31.8%</span></div>
+            </div>
+            <div class="kpi-card c3">
+              <div class="kpi-label">Unidades Vendidas</div>
+              <div class="kpi-val" id="kpi-unidades">2,435</div>
+              <div class="kpi-sub"><span class="badge badge-yellow" id="kpi-unidades-badge">prom 110.7/tx</span></div>
+            </div>
+            <div class="kpi-card c4">
+              <div class="kpi-label">Ticket Promedio</div>
+              <div class="kpi-val" id="kpi-ticket">$16.7K</div>
+              <div class="kpi-sub"><span class="badge badge-emerald" id="kpi-ticket-badge">ingreso/tx</span></div>
+            </div>
+          </div>
+          <div class="wide-chart">
+            <div class="chart-header">
+              <div>
+                <div class="chart-title">Julio fue el mes pico con $88K — <span class="accent">¿en qué meses vender más también dejó más ganancia?</span></div>
+                <div class="chart-desc">Ingresos, ganancias y costos mensuales de enero a septiembre · La brecha entre ingreso y costo es la ganancia real · Cuando las dos curvas superiores se acercan, el margen se comprime</div>
+              </div>
+              <div class="chart-legend">
+                <div class="leg-item"><div class="leg-line" style="background:var(--v1)"></div>Ingreso</div>
+                <div class="leg-item"><div class="leg-line" style="background:var(--v2)"></div>Ganancia</div>
+                <div class="leg-item"><div class="leg-line" style="background:var(--muted);opacity:0.5"></div>Costo</div>
+              </div>
+            </div>
+            <div class="line-wrap">
+              <canvas id="chartLine"></canvas>
+            </div>
+          </div>
+          <div class="bottom-grid">
+            <div class="chart-card">
+              <div class="card-title">Este lidera en ingresos absolutos — <span class="accent">¿qué tan lejos están las otras regiones?</span></div>
+              <div class="card-desc">Ingresos totales del período por zona geográfica · Norte supera a Sur pese a tener menos transacciones</div>
+              <div id="region-bars"></div>
+            </div>
+            <div class="chart-card">
+              <div class="card-title">Online y presencial casi empatados — <span class="accent">¿por cuál canal prefieren comprar los clientes?</span></div>
+              <div class="card-desc">Distribución del ingreso total según canal de venta · Una diferencia de solo 6 puntos porcentuales entre ambos</div>
+              <div class="donut-wrap">
+                <div style="position:relative;width:130px;height:130px;flex-shrink:0">
+                  <canvas id="chartCanal" style="width:130px!important;height:130px!important"></canvas>
+                </div>
+                <div class="donut-legend" id="canal-list"></div>
+              </div>
+            </div>
+            <div class="chart-card">
+              <div class="card-title">Electrónica retiene 38¢ de cada peso vendido — <span class="accent">¿qué producto es más rentable por unidad de ingreso?</span></div>
+              <div class="card-desc">Margen bruto (ganancia ÷ ingreso) por categoría · Alta facturación no garantiza alta rentabilidad</div>
+              <div id="margin-table"></div>
+            </div>
+          </div>
+          <div class="bottom-row">
+            <div class="chart-card">
+              <div class="card-title">Electrónica concentra el 72% del ingreso y el 70% del costo — <span class="accent">¿qué tan ancha es la brecha entre lo que entra y lo que cuesta?</span></div>
+              <div class="card-desc">Ingresos totales vs. costos totales por categoría · La diferencia visible entre barras es la ganancia bruta real de cada línea</div>
+              <div style="display:flex;gap:16px;margin-bottom:16px">
+                <div class="leg-item"><div class="leg-line" style="background:var(--v1)"></div>Ingreso</div>
+                <div class="leg-item"><div class="leg-line" style="background:var(--v2)"></div>Costo</div>
+              </div>
+              <div style="position:relative;height:210px;">
+                <canvas id="chartCostoIngreso"></canvas>
+              </div>
+            </div>
+            <div class="chart-card">
+              <div class="card-title">Oeste opera con el mejor margen pese a ser la región de menor ingreso — <span class="accent">¿qué región convierte mejor cada peso vendido en ganancia?</span></div>
+              <div class="card-desc">Ganancia total y margen operativo por región · Norte tiene la mayor ganancia absoluta pero Oeste la eficiencia más alta</div>
+              <div id="eficiencia-table"></div>
+            </div>
+          </div>
         </div>
-        <div class="filters">
-          <button class="filter-btn active" onclick="filterRegion('Todos',this)">Todos</button>
-          <button class="filter-btn" onclick="filterRegion('Norte',this)">Norte</button>
-          <button class="filter-btn" onclick="filterRegion('Sur',this)">Sur</button>
-          <button class="filter-btn" onclick="filterRegion('Este',this)">Este</button>
-          <button class="filter-btn" onclick="filterRegion('Oeste',this)">Oeste</button>
-        </div>
-      </div>
 
-      <div class="kpi-grid">
-        <div class="kpi-card">
-          <div class="kpi-label">Ingreso Total</div>
-          <div class="kpi-val" id="kpi-ingreso">$368K</div>
-          <div class="kpi-sub"><span class="badge badge-cyan" id="kpi-ingreso-badge">22 transacc.</span></div>
+        <!-- VIEW: TENDENCIAS -->
+        <div id="view-tendencias" class="view">
+          <div class="topbar">
+            <div>
+              <h1 class="page-title">Análisis de <span class="hi">Tendencias</span></h1>
+              <p class="page-sub">Evolución temporal de ventas, márgenes y desempeño por producto</p>
+            </div>
+          </div>
+          <div class="trends-container">
+            <div class="trend-header">
+              <div>
+                <div class="trend-title">Evolución mensual de ventas — <span class="accent">¿cuál fue la trayectoria de ingresos y ganancia?</span></div>
+                <div class="trend-desc">Vista del comportamiento mensual de ingresos totales, ganancias netas y costos acumulados de enero a septiembre 2025</div>
+              </div>
+            </div>
+            <div class="chart-wrap">
+              <canvas id="chartTrendLine"></canvas>
+            </div>
+          </div>
+          <div class="bottom-grid">
+            <div class="chart-card">
+              <div class="card-title">Evolución por Producto — <span class="accent">¿qué línea tiene mejor crecimiento?</span></div>
+              <div class="card-desc">Ingresos mensuales por categoría de producto para identificar patrones y estacionalidad</div>
+              <div class="chart-wrap">
+                <canvas id="chartTrendProduct" style="max-height: 250px;"></canvas>
+              </div>
+            </div>
+            <div class="chart-card">
+              <div class="card-title">Margen Mensual — <span class="accent">¿en qué meses se aprietó más el margen?</span></div>
+              <div class="card-desc">Porcentaje de ganancia bruta mes a mes para detectar cambios en rentabilidad</div>
+              <div class="chart-wrap">
+                <canvas id="chartTrendMargin" style="max-height: 250px;"></canvas>
+              </div>
+            </div>
+            <div class="chart-card">
+              <div class="card-title">Unidades Vendidas — <span class="accent">¿hay relación entre volumen y ganancia?</span></div>
+              <div class="card-desc">Cantidad de unidades vendidas mensuales para comparar con ingresos y márgenes</div>
+              <div class="chart-wrap">
+                <canvas id="chartTrendVolume" style="max-height: 250px;"></canvas>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="kpi-card c2">
-          <div class="kpi-label">Ganancia Bruta</div>
-          <div class="kpi-val" id="kpi-ganancia">$117K</div>
-          <div class="kpi-sub"><span class="badge badge-rose" id="kpi-margen-badge">margen 31.8%</span></div>
-        </div>
-        <div class="kpi-card c3">
-          <div class="kpi-label">Unidades Vendidas</div>
-          <div class="kpi-val" id="kpi-unidades">2,435</div>
-          <div class="kpi-sub"><span class="badge badge-yellow" id="kpi-unidades-badge">prom 110.7/tx</span></div>
-        </div>
-        <div class="kpi-card c4">
-          <div class="kpi-label">Ticket Promedio</div>
-          <div class="kpi-val" id="kpi-ticket">$16.7K</div>
-          <div class="kpi-sub"><span class="badge badge-emerald" id="kpi-ticket-badge">ingreso/tx</span></div>
-        </div>
-      </div>
 
-      <div class="wide-chart">
-        <div class="chart-header">
-          <div>
-            <div class="chart-title">Julio fue el mes pico con $88K — <span class="accent">¿en qué meses vender más
-                también dejó más ganancia?</span></div>
-            <div class="chart-desc">Ingresos, ganancias y costos mensuales de enero a septiembre · La brecha entre
-              ingreso y costo es la ganancia real · Cuando las dos curvas superiores se acercan, el margen se comprime
+        <!-- VIEW: REGIONES -->
+        <div id="view-regiones" class="view">
+          <div class="topbar">
+            <div>
+              <h1 class="page-title">Análisis por <span class="hi">Regiones</span></h1>
+              <p class="page-sub">Comparativa de desempeño: Norte, Sur, Este y Oeste</p>
             </div>
           </div>
-          <div class="chart-legend">
-            <div class="leg-item">
-              <div class="leg-line" style="background:var(--v1)"></div>Ingreso
+          <div class="region-grid" id="region-cards-container"></div>
+          <div class="bottom-grid">
+            <div class="chart-card" style="grid-column: span 2;">
+              <div class="card-title">Comparativa Regional — <span class="accent">¿cuál región domina en cada métrica?</span></div>
+              <div class="card-desc">Métricas clave por región: ingreso, ganancia, margen y número de transacciones</div>
+              <div id="region-comparison"></div>
             </div>
-            <div class="leg-item">
-              <div class="leg-line" style="background:var(--v2)"></div>Ganancia
-            </div>
-            <div class="leg-item">
-              <div class="leg-line" style="background:var(--muted);opacity:0.5"></div>Costo
+            <div class="chart-card">
+              <div class="card-title">Distribución por Canal — <span class="accent">¿qué canal se usa más en cada región?</span></div>
+              <div class="card-desc">Proporción de ventas en línea vs presencial por zona geográfica</div>
+              <div id="region-canal"></div>
             </div>
           </div>
         </div>
-        <div class="line-wrap">
-          <canvas id="chartLine" role="img"
-            aria-label="Gráfico de líneas de ingresos, ganancias y costos mensuales enero a septiembre 2025">Ingresos,
-            ganancias y costos de enero a septiembre 2025.</canvas>
-        </div>
-      </div>
 
-      <div class="bottom-grid">
-        <div class="chart-card">
-          <div class="card-title">Este lidera en ingresos absolutos — <span class="accent">¿qué tan lejos están las
-              otras regiones?</span></div>
-          <div class="card-desc">Ingresos totales del período por zona geográfica · Norte supera a Sur pese a tener
-            menos transacciones</div>
-          <div id="region-bars"></div>
-        </div>
-        <div class="chart-card">
-          <div class="card-title">Online y presencial casi empatados — <span class="accent">¿por cuál canal prefieren
-              comprar los clientes?</span></div>
-          <div class="card-desc">Distribución del ingreso total según canal de venta · Una diferencia de solo 6 puntos
-            porcentuales entre ambos</div>
-          <div class="donut-wrap">
-            <div style="position:relative;width:130px;height:130px;flex-shrink:0">
-              <canvas id="chartCanal" style="width:130px!important;height:130px!important" role="img"
-                aria-label="Dona canal de ventas: 53% en línea, 47% presencial">Canal En línea 53%, Presencial
-                47%.</canvas>
+        <!-- VIEW: REPORTES -->
+        <div id="view-reportes" class="view">
+          <div class="topbar">
+            <div>
+              <h1 class="page-title">Datos <span class="hi">Transaccionales</span></h1>
+              <p class="page-sub">Detalle completo de las 22 transacciones del período</p>
             </div>
-            <div class="donut-legend" id="canal-list"></div>
+          </div>
+          <div class="chart-card">
+            <div class="card-desc" style="margin-bottom: 16px;">Tabla de todas las transacciones registradas. Ordena, filtra o descarga los datos para análisis detallado.</div>
+            <div style="overflow-x: auto;">
+              <table class="data-table" id="transactionsTable">
+                <thead>
+                  <tr>
+                    <th>Fecha</th>
+                    <th>Región</th>
+                    <th>Producto</th>
+                    <th>Canal</th>
+                    <th>Unidades</th>
+                    <th>Precio Unit.</th>
+                    <th>Ingreso</th>
+                    <th>Costo</th>
+                    <th>Ganancia</th>
+                    <th>Margen</th>
+                  </tr>
+                </thead>
+                <tbody id="transactionsBody"></tbody>
+              </table>
+            </div>
           </div>
         </div>
-        <div class="chart-card">
-          <div class="card-title">Electrónica retiene 38¢ de cada peso vendido — <span class="accent">¿qué producto es
-              más rentable por unidad de ingreso?</span></div>
-          <div class="card-desc">Margen bruto (ganancia ÷ ingreso) por categoría · Alta facturación no garantiza alta
-            rentabilidad</div>
-          <div id="margin-table"></div>
-        </div>
-      </div>
 
-      <div class="bottom-row">
-        <div class="chart-card">
-          <div class="card-title">Electrónica concentra el 72% del ingreso y el 70% del costo — <span
-              class="accent">¿qué tan ancha es la brecha entre lo que entra y lo que cuesta?</span></div>
-          <div class="card-desc">Ingresos totales vs. costos totales por categoría · La diferencia visible entre barras
-            es la ganancia bruta real de cada línea</div>
-          <div style="display:flex;gap:16px;margin-bottom:16px">
-            <div class="leg-item">
-              <div class="leg-line" style="background:var(--v1)"></div>Ingreso
-            </div>
-            <div class="leg-item">
-              <div class="leg-line" style="background:var(--v2)"></div>Costo
+        <!-- VIEW: EQUIPO -->
+        <div id="view-equipo" class="view">
+          <div class="topbar">
+            <div>
+              <h1 class="page-title">Performance del <span class="hi">Equipo</span></h1>
+              <p class="page-sub">Efectividad y productividad por región de ventas</p>
             </div>
           </div>
-          <div style="position:relative;height:210px;">
-            <canvas id="chartCostoIngreso" role="img"
-              aria-label="Barras agrupadas ingreso vs costo por categoría">Electrónica: $264K ingreso, $162K costo.
-              Hogar: $82K vs $55K. Ropa: $46K vs $33K.</canvas>
+          <div class="region-grid" id="team-region-container"></div>
+          <div class="bottom-grid">
+            <div class="chart-card" style="grid-column: span 1.5;">
+              <div class="card-title">Top Productos — <span class="accent">¿qué se vende mejor?</span></div>
+              <div class="card-desc">Ranking de productos por ingresos generados en el período</div>
+              <div id="top-products"></div>
+            </div>
+            <div class="chart-card" style="grid-column: span 1.5;">
+              <div class="card-title">Tickets de Mayor Valor — <span class="accent">¿cuál es el rango de ventas?</span></div>
+              <div class="card-desc">Distribución de tamaño de transacciones y promedio por región</div>
+              <div class="chart-wrap">
+                <canvas id="chartTicketDistribution" style="max-height: 250px;"></canvas>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="chart-card">
-          <div class="card-title">Oeste opera con el mejor margen pese a ser la región de menor ingreso — <span
-              class="accent">¿qué región convierte mejor cada peso vendido en ganancia?</span></div>
-          <div class="card-desc">Ganancia total y margen operativo por región · Norte tiene la mayor ganancia absoluta
-            pero Oeste la eficiencia más alta</div>
-          <div id="eficiencia-table"></div>
         </div>
       </div>
     </main>
@@ -1031,7 +469,330 @@
       buildEficiencia(filteredData);
     }
 
-    window.addEventListener('DOMContentLoaded', renderAll);
+    // ===== VISTA SWITCHING =====
+    function switchView(viewName, navItemEl) {
+      // Ocultar todas las vistas
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      // Mostrar la vista seleccionada
+      document.getElementById(`view-${viewName}`).classList.add('active');
+      // Actualizar nav items activos
+      document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+      navItemEl.classList.add('active');
+      // Renderizar contenido de la vista
+      if (viewName === 'performance') {
+        renderAll();
+      } else if (viewName === 'tendencias') {
+        renderTrendencias();
+      } else if (viewName === 'regiones') {
+        renderRegiones();
+      } else if (viewName === 'reportes') {
+        renderReportes();
+      } else if (viewName === 'equipo') {
+        renderEquipo();
+      }
+    }
+
+    // ===== VISTA TENDENCIAS =====
+    let chartTrendLine, chartTrendProduct, chartTrendMargin, chartTrendVolume;
+
+    function renderTrendencias() {
+      buildTrendChart(rawData);
+      buildTrendProductChart(rawData);
+      buildTrendMarginChart(rawData);
+      buildTrendVolumeChart(rawData);
+    }
+
+    function buildTrendChart(data) {
+      const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep'];
+      const ing = new Array(9).fill(0), gan = new Array(9).fill(0), cos = new Array(9).fill(0);
+      data.forEach(r => { const m = parseDate(r.fecha).getMonth(); if (m <= 8) { ing[m] += r.ingreso; gan[m] += r.ganancia; cos[m] += r.costo; } });
+      const ctx = document.getElementById('chartTrendLine');
+      if (chartTrendLine) chartTrendLine.destroy();
+      chartTrendLine = new Chart(ctx, {
+        type: 'line', data: {
+          labels: months,
+          datasets: [
+            { label: 'Ingreso', data: ing, borderColor: '#00e5ff', backgroundColor: 'rgba(0,229,255,0.07)', borderWidth: 2.5, pointRadius: 4, pointBackgroundColor: '#00e5ff', fill: true, tension: 0.4 },
+            { label: 'Ganancia', data: gan, borderColor: '#ff4d6d', backgroundColor: 'rgba(255,77,109,0.06)', borderWidth: 2.5, pointRadius: 4, pointBackgroundColor: '#ff4d6d', fill: true, tension: 0.4 },
+            { label: 'Costo', data: cos, borderColor: 'rgba(123,141,176,0.4)', borderDash: [5, 4], borderWidth: 1.5, pointRadius: 3, fill: false, tension: 0.4 }
+          ]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
+          plugins: { legend: { display: false }, tooltip: { ...ttDef, callbacks: { label: c => ' ' + c.dataset.label + ': ' + fmtKA(c.raw) } } },
+          scales: { x: { grid: { color: gridC }, border: { color: borderC }, ticks: { color: '#7b8db0' } }, y: { grid: { color: gridC }, border: { color: borderC }, ticks: { color: '#7b8db0', callback: v => fmtKA(v) } } }
+        }
+      });
+    }
+
+    function buildTrendProductChart(data) {
+      const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep'];
+      const prods = ['Electrónica', 'Artículos del hogar', 'Ropa'];
+      const datasets = prods.map((p, i) => {
+        const colors = ['#00e5ff', '#ff4d6d', '#ffe600'];
+        const vals = new Array(9).fill(0);
+        data.forEach(r => { const m = parseDate(r.fecha).getMonth(); if (m <= 8 && r.producto === p) vals[m] += r.ingreso; });
+        return { label: p, data: vals, borderColor: colors[i], backgroundColor: colors[i] + '18', borderWidth: 2, pointRadius: 3, fill: true, tension: 0.4 };
+      });
+      const ctx = document.getElementById('chartTrendProduct');
+      if (chartTrendProduct) chartTrendProduct.destroy();
+      chartTrendProduct = new Chart(ctx, {
+        type: 'line', data: { labels: months, datasets }, options: {
+          responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
+          plugins: { legend: { position: 'bottom' }, tooltip: { ...ttDef, callbacks: { label: c => ' ' + c.dataset.label + ': ' + fmtKA(c.raw) } } },
+          scales: { x: { grid: { color: gridC } }, y: { grid: { color: gridC }, ticks: { callback: v => fmtKA(v) } } }
+        }
+      });
+    }
+
+    function buildTrendMarginChart(data) {
+      const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep'];
+      const vals = new Array(9).fill(0), cnts = new Array(9).fill(0);
+      data.forEach(r => { const m = parseDate(r.fecha).getMonth(); if (m <= 8) { vals[m] += r.ganancia; cnts[m] += r.ingreso; } });
+      const margins = vals.map((g, i) => cnts[i] > 0 ? g / cnts[i] * 100 : 0);
+      const ctx = document.getElementById('chartTrendMargin');
+      if (chartTrendMargin) chartTrendMargin.destroy();
+      chartTrendMargin = new Chart(ctx, {
+        type: 'line', data: {
+          labels: months,
+          datasets: [{ label: 'Margen %', data: margins, borderColor: '#7c3aed', backgroundColor: 'rgba(124,58,237,0.08)', borderWidth: 2, pointRadius: 4, fill: true }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false }, tooltip: { ...ttDef, callbacks: { label: c => ' Margen: ' + c.raw.toFixed(1) + '%' } } },
+          scales: { x: { grid: { color: gridC } }, y: { grid: { color: gridC }, ticks: { callback: v => v.toFixed(0) + '%' }, min: 0, max: 50 } }
+        }
+      });
+    }
+
+    function buildTrendVolumeChart(data) {
+      const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep'];
+      const vals = new Array(9).fill(0);
+      data.forEach(r => { const m = parseDate(r.fecha).getMonth(); if (m <= 8) vals[m] += r.unidades; });
+      const ctx = document.getElementById('chartTrendVolume');
+      if (chartTrendVolume) chartTrendVolume.destroy();
+      chartTrendVolume = new Chart(ctx, {
+        type: 'bar', data: {
+          labels: months,
+          datasets: [{ label: 'Unidades', data: vals, backgroundColor: '#00c896', borderColor: '#00c896', borderRadius: 4 }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false }, tooltip: { ...ttDef, callbacks: { label: c => ' Unidades: ' + fmt(c.raw) } } },
+          scales: { x: { grid: { display: false } }, y: { grid: { color: gridC }, ticks: { callback: v => fmt(v) } } }
+        }
+      });
+    }
+
+    // ===== VISTA REGIONES =====
+    let chartRegionComparison, chartRegionCanal, chartTicketDist;
+
+    function renderRegiones() {
+      buildRegionCards();
+      buildRegionComparison();
+      buildRegionCanalChart();
+    }
+
+    function buildRegionCards() {
+      const regions = ['Norte', 'Sur', 'Este', 'Oeste'];
+      const colors = { Norte: '#00e5ff', Sur: '#ff4d6d', Este: '#ffe600', Oeste: '#00c896' };
+      const html = regions.map(r => {
+        const rows = rawData.filter(d => d.region === r);
+        const ing = rows.reduce((s, d) => s + d.ingreso, 0);
+        const gan = rows.reduce((s, d) => s + d.ganancia, 0);
+        const uni = rows.reduce((s, d) => s + d.unidades, 0);
+        const txcount = rows.length;
+        const margin = ing > 0 ? gan / ing * 100 : 0;
+        return `<div class="region-card" style="--region-color: ${colors[r]}">
+          <div class="region-name">${r}</div>
+          <div class="region-kpis">
+            <div class="region-metric">
+              <div class="region-metric-label">Ingreso</div>
+              <div class="region-metric-value">${fmtK(ing)}</div>
+            </div>
+            <div class="region-metric">
+              <div class="region-metric-label">Ganancia</div>
+              <div class="region-metric-value">${fmtK(gan)}</div>
+            </div>
+            <div class="region-metric">
+              <div class="region-metric-label">Margen</div>
+              <div class="region-metric-value">${margin.toFixed(1)}%</div>
+            </div>
+            <div class="region-metric">
+              <div class="region-metric-label">Transacciones</div>
+              <div class="region-metric-value">${txcount}</div>
+            </div>
+          </div>
+        </div>`;
+      }).join('');
+      document.getElementById('region-cards-container').innerHTML = html;
+    }
+
+    function buildRegionComparison() {
+      const regions = ['Norte', 'Sur', 'Este', 'Oeste'];
+      const data = regions.map(r => {
+        const rows = rawData.filter(d => d.region === r);
+        const ing = rows.reduce((s, d) => s + d.ingreso, 0);
+        const gan = rows.reduce((s, d) => s + d.ganancia, 0);
+        const margin = ing > 0 ? gan / ing * 100 : 0;
+        return { region: r, ingreso: ing, ganancia: gan, margin, txcount: rows.length };
+      });
+      const html = data.map(d => `
+        <div class="margin-row">
+          <span class="margin-name">${d.region}</span>
+          <div class="margin-right">
+            <span class="margin-amt" style="width: 100px;">${fmtK(d.ingreso)}</span>
+            <span class="margin-amt" style="width: 100px;">${fmtK(d.ganancia)}</span>
+            <span class="tag tag-cyan">${d.margin.toFixed(1)}%</span>
+          </div>
+        </div>
+      `).join('');
+      document.getElementById('region-comparison').innerHTML = `<div style="margin-bottom: 16px; font-size: 11px; color: var(--muted); display: flex; gap: 12px;;">
+        <span style="width: 150px;"><strong>Región</strong></span>
+        <span style="width: 100px; text-align: right;"><strong>Ingreso</strong></span>
+        <span style="width: 100px; text-align: right;"><strong>Ganancia</strong></span>
+        <span><strong>Margen</strong></span>
+      </div>${html}`;
+    }
+
+    function buildRegionCanalChart() {
+      const regions = ['Norte', 'Sur', 'Este', 'Oeste'];
+      const html = regions.map(r => {
+        const rows = rawData.filter(d => d.region === r);
+        const online = rows.filter(d => d.canal === 'En línea').reduce((s, d) => s + d.ingreso, 0);
+        const presencial = rows.filter(d => d.canal === 'Presencial').reduce((s, d) => s + d.ingreso, 0);
+        const tot = online + presencial || 1;
+        return `<div class="margin-row">
+          <span class="margin-name">${r}</span>
+          <div class="margin-right">
+            <span class="margin-amt">En línea: ${(online / tot * 100).toFixed(0)}%</span>
+            <span class="tag tag-cyan">${fmtK(online)}</span>
+          </div>
+        </div>`;
+      }).join('');
+      document.getElementById('region-canal').innerHTML = html;
+    }
+
+    // ===== VISTA REPORTES =====
+    function renderReportes() {
+      buildTransactionsTable();
+    }
+
+    function buildTransactionsTable() {
+      const html = rawData.map((r, i) => `
+        <tr>
+          <td>${r.fecha}</td>
+          <td class="region-cell">${r.region}</td>
+          <td>${r.producto}</td>
+          <td>${r.canal}</td>
+          <td class="num">${fmt(r.unidades)}</td>
+          <td class="num">$${r.precio.toFixed(2)}</td>
+          <td class="num" style="color: var(--v1);">${fmtK(r.ingreso)}</td>
+          <td class="num" style="color: var(--v2);">${fmtK(r.costo)}</td>
+          <td class="num" style="color: var(--v5);">${fmtK(r.ganancia)}</td>
+          <td class="num"><span class="tag tag-cyan">${(r.ganancia / r.ingreso * 100).toFixed(1)}%</span></td>
+        </tr>
+      `).join('');
+      document.getElementById('transactionsBody').innerHTML = html;
+    }
+
+    // ===== VISTA EQUIPO =====
+    function renderEquipo() {
+      buildTeamRegionCards();
+      buildTopProductsTable();
+      buildTicketChart();
+    }
+
+    function buildTeamRegionCards() {
+      const regions = ['Norte', 'Sur', 'Este', 'Oeste'];
+      const colors = { Norte: '#00e5ff', Sur: '#ff4d6d', Este: '#ffe600', Oeste: '#00c896' };
+      const html = regions.map(r => {
+        const rows = rawData.filter(d => d.region === r);
+        const ing = rows.reduce((s, d) => s + d.ingreso, 0);
+        const gan = rows.reduce((s, d) => s + d.ganancia, 0);
+        const txcount = rows.length;
+        const avgTicket = ing / (txcount || 1);
+        return `<div class="region-card" style="--region-color: ${colors[r]}">
+          <div class="region-name">Equipo ${r}</div>
+          <div class="region-kpis">
+            <div class="region-metric">
+              <div class="region-metric-label">Transacciones</div>
+              <div class="region-metric-value">${txcount}</div>
+            </div>
+            <div class="region-metric">
+              <div class="region-metric-label">Ingreso Total</div>
+              <div class="region-metric-value">${fmtK(ing)}</div>
+            </div>
+            <div class="region-metric">
+              <div class="region-metric-label">Ticket Promedio</div>
+              <div class="region-metric-value">${fmtK(avgTicket)}</div>
+            </div>
+            <div class="region-metric">
+              <div class="region-metric-label">Ganancia</div>
+              <div class="region-metric-value">${fmtK(gan)}</div>
+            </div>
+          </div>
+        </div>`;
+      }).join('');
+      document.getElementById('team-region-container').innerHTML = html;
+    }
+
+    function buildTopProductsTable() {
+      const prods = ['Electrónica', 'Artículos del hogar', 'Ropa'];
+      const data = prods.map(p => {
+        const rows = rawData.filter(r => r.producto === p);
+        const ing = rows.reduce((s, r) => s + r.ingreso, 0);
+        const gan = rows.reduce((s, r) => s + r.ganancia, 0);
+        const txcount = rows.length;
+        return { p, ing, gan, txcount, margin: ing > 0 ? gan / ing * 100 : 0 };
+      }).sort((a, b) => b.ing - a.ing);
+      const html = data.map((d, i) => `
+        <div class="margin-row">
+          <span class="margin-name" style="color: var(--v${i+1});">#${i+1} ${d.p}</span>
+          <div class="margin-right">
+            <span class="margin-amt">${d.txcount} tx</span>
+            <span class="tag tag-cyan">${fmtK(d.ing)}</span>
+          </div>
+        </div>
+      `).join('');
+      document.getElementById('top-products').innerHTML = html;
+    }
+
+    function buildTicketChart() {
+      const regions = ['Norte', 'Sur', 'Este', 'Oeste'];
+      const tickets = regions.map(r => {
+        const rows = rawData.filter(d => d.region === r);
+        return rows.map(d => d.ingreso);
+      }).flat().sort((a, b) => a - b);
+      const ctx = document.getElementById('chartTicketDistribution');
+      if (chartTicketDist) chartTicketDist.destroy();
+      chartTicketDist = new Chart(ctx, {
+        type: 'bar', data: {
+          labels: ['$0-5K', '$5-10K', '$10-20K', '$20-35K', '$35-50K'],
+          datasets: [{
+            label: 'Cantidad de transacciones',
+            data: [
+              tickets.filter(t => t < 5000).length,
+              tickets.filter(t => t >= 5000 && t < 10000).length,
+              tickets.filter(t => t >= 10000 && t < 20000).length,
+              tickets.filter(t => t >= 20000 && t < 35000).length,
+              tickets.filter(t => t >= 35000).length
+            ],
+            backgroundColor: '#7c3aed',
+            borderRadius: 4
+          }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false }, tooltip: { ...ttDef } },
+          scales: { x: { grid: { display: false } }, y: { grid: { color: gridC } } }
+        }
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderAll();
+    });
   </script>
 </body>
 
